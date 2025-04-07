@@ -8,7 +8,6 @@ export const createPost = async (req, res) => {
   try {
     const { title, content } = req.body;
     
-    // Get the image URL from Cloudinary (multer-storage-cloudinary puts the path in req.file)
     const imageUrl = req.file ? req.file.path : null;
     
     const post = new Post({
@@ -31,42 +30,33 @@ export const updatePost = async (req, res) => {
     const { title, content } = req.body;
     const postId = req.params.id;
     
-    // Find the existing post
     const post = await Post.findById(postId);
     
     if (!post) {
       return res.status(404).json({ message: 'Post not found' });
     }
     
-    // Check if user is the author
     if (post.author.toString() !== req.user.id) {
       return res.status(403).json({ message: 'Not authorized to update this post' });
     }
     
-    // Process new image if uploaded
-    let imageUrl = post.image; // Keep existing image by default
+    let imageUrl = post.image; 
     
     if (req.file) {
-      // If there's a new file, get its Cloudinary url
       imageUrl = req.file.path;
       
-      // Delete old image from Cloudinary if it exists
       if (post.image) {
         try {
-          // Extract the public_id from the Cloudinary URL
           const publicId = post.image.split('/').pop().split('.')[0];
-          // Include the folder if you specified one in the Cloudinary storage config
           const folderWithPublicId = `blog_uploads/${publicId}`;
           
           await cloudinary.uploader.destroy(folderWithPublicId);
         } catch (err) {
           console.error('Error deleting old image from Cloudinary:', err);
-          // Continue with update even if old image deletion fails
         }
       }
     }
     
-    // Update the post
     const updatedPost = await Post.findByIdAndUpdate(
       postId,
       { title, content, image: imageUrl },

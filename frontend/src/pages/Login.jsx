@@ -11,7 +11,6 @@ function Login() {
   const location = useLocation();
 
   useEffect(() => {
-    // Check for success message passed from registration
     if (location.state?.message) {
       setSuccessMessage(location.state.message);
     }

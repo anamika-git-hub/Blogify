@@ -14,7 +14,6 @@ function CreatePost() {
     if (file) {
       setFormData({ ...formData, image: file });
       
-      // Create preview URL
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result);
@@ -28,7 +27,6 @@ function CreatePost() {
     setLoading(true);
     setError('');
     
-    // Create formData for file uploading
     const data = new FormData();
     data.append('title', formData.title);
     data.append('content', formData.content);
