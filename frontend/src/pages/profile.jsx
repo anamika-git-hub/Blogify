@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import PostCard from '../components/PostCard';
+import API from '../utils/api';
 
 const Profile = () => {
   const [myPosts, setMyPosts] = useState([]);
@@ -8,7 +9,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchMyPosts = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/posts/my-posts', {
+        const res = await API.get('/posts/my-posts', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
